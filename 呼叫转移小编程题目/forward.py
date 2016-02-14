@@ -1,7 +1,16 @@
 #coding=UTF-8
 import re
 import sys
-#假定从文件读入记录
+"""
+假定从文件input.txt读入记录，文件内容同题目要求
+主入口main共调两个函数getRecords和calculate，一个读取记录，另一个计算
+1.getRecords读取文件并解析内容，通过一个正则表达式来匹配每一行呼转记录，如果匹配可以直接得到各个值，如果不匹配，报错并返回
+2
+ 2.1 calculate中首先找到“包含要计算日期的呼转记录”
+ 2.2 然后将呼转记录保存到一个map(key=设置了呼转的号码，value=被转移到的号码)，<此时就得到当天设置的实际的呼转个数,题目要求之一>
+	保存到map的另一个额外好处：因为map的key唯一，所以出现同一人的多条呼转记录只能记录一条，那么此时map的大小必然比原纪录个数少
+ 2.3再对所有记录出现过的每一个号码循环查找呼转链(通过map.get一直迭代)，直到没有记录（记录呼转链的长度，如果超过之前的最长记录则更新之）或者超过总记录数（说明出现环路则报错并返回）
+"""
 inputFile = "input.txt"
 f = open(inputFile)
 
@@ -37,6 +46,7 @@ def getRecords():
 		elif recordNum > 0:#普通呼叫转移记录
 			matcher = dataPattern.match(data)
 			if matcher:
+				#直接通过匹配组找出需要的记录
 				first = matcher.group("first")
 				second = matcher.group("second")
 				startForwardDate = int(matcher.group("startForwardDate")) 
